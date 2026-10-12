@@ -304,6 +304,7 @@ let state = {
   showExternalPlayer: false,
   durationMs: 0,
   positionMs: 0,
+  bufferedPositionMs: 0,
   audioTracks: [],
   subtitleTracks: [],
   sourceIsLoading: false,
@@ -795,10 +796,13 @@ const formatTime = milliseconds => {
     : `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 };
 
-const setProgress = (positionMs, durationMs) => {
+const setProgress = (positionMs, durationMs, bufferedPositionMs) => {
   const percent = durationMs > 0 ? Math.max(0, Math.min(100, positionMs / durationMs * 100)) : 0;
+  const bufferPercent = bufferedPositionMs > 0 ?
+    Math.max(0, Math.min(100, bufferedPositionMs / durationMs * 100)) : 0;
   seek.value = Math.round(percent * 10);
   seek.style.setProperty("--progress", `${percent}%`);
+  seek.style.setProperty("--bufferProgress", `${bufferPercent}%`);
   positionLabel.textContent = formatTime(positionMs);
   durationLabel.textContent = formatTime(durationMs);
   if (timeLabel) {
@@ -2395,6 +2399,7 @@ const finishChromePointerInteraction = event => {
 const renderChrome = () => {
   const durationMs = Math.max(0, Number(state.durationMs) || 0);
   const positionMs = isScrubbing ? scrubPositionMs : Math.max(0, Number(state.positionMs) || 0);
+  const bufferedPositionMs = Math.max(0, Number(state.bufferedPositionMs) || 0);
   const isPlaying = Boolean(state.isPlaying);
   const showError = renderPlaybackError();
   root.classList.toggle("pip-mode", Boolean(state.isInPip));
@@ -2461,7 +2466,7 @@ const renderChrome = () => {
   backButton.setAttribute("aria-label", state.closeLabel || "Close player");
   submitIntroButton.setAttribute("aria-label", state.submitIntroLabel || "Submit Intro");
   videoSettingsButton.setAttribute("aria-label", state.videoSettingsLabel || "Video settings");
-  setProgress(positionMs, durationMs);
+  setProgress(positionMs, durationMs, bufferedPositionMs);
   if (showError) {
     skipPrompt.classList.remove("visible", "show-progress");
     skipPrompt.setAttribute("aria-hidden", "true");
@@ -2636,10 +2641,11 @@ const fineSeek = isForward => {
 
   const currentPosMs = Math.max(0, Number(state.positionMs) || 0);
   const durationMs = Math.max(0, Number(state.durationMs) || 0);
+  const bufferedPositionMs = Math.max(0, Number(state.bufferedPositionMs) || 0);
   const targetPosMs = Math.max(0, durationMs > 0 ? Math.min(durationMs, currentPosMs + stepMs) : currentPosMs + stepMs);
 
   state.positionMs = targetPosMs;
-  setProgress(targetPosMs, durationMs);
+  setProgress(targetPosMs, durationMs, bufferedPositionMs);
 
   const deltaSec = Math.round(fineSeekAccumulatedMs / 1000);
   const sign = deltaSec > 0 ? "+" : "";
@@ -3088,7 +3094,7 @@ seek.addEventListener("input", () => {
   noteChromeActivity();
   isScrubbing = true;
   scrubPositionMs = rangePositionMs();
-  setProgress(scrubPositionMs, state.durationMs);
+  setProgress(scrubPositionMs, state.durationMs, state.bufferedPositionMs);
   send("scrubChange", scrubPositionMs);
 });
 
@@ -3138,6 +3144,7 @@ timeLabel.addEventListener("click", () => {
 window.playerUpdate = update => {
   const durationMs = Math.round((Number(update.duration) || 0) * 1000);
   const positionMs = Math.round((Number(update.position) || 0) * 1000);
+  const bufferedPositionMs = Math.round((Number(update.bufferedPosition) || 0) * 1000);
   const reportedVolumeLevel = Number(update.volumeLevel);
   const volumeLevel = Number.isFinite(reportedVolumeLevel)
     ? clampVolumeLevel(reportedVolumeLevel)
@@ -3157,6 +3164,7 @@ window.playerUpdate = update => {
     ...state,
     durationMs,
     positionMs,
+    bufferedPositionMs,
     isPlaying: pendingIsPlaying === null ? nativeIsPlaying : pendingIsPlaying,
     isLoading: Boolean(update.loading || update.isLoading),
     volumeLevel,
@@ -3976,7 +3984,7 @@ document.addEventListener("keydown", event => {
   send(command, 0);
 });
 
-setProgress(0, 0);
+setProgress(0, 0, 0);
 focusShortcutRoot();
 render();
 send("controlsReady", 0);

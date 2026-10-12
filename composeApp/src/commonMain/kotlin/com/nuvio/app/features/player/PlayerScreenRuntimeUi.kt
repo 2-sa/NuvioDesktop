@@ -378,6 +378,7 @@ internal fun PlayerScreenRuntime.RenderPlayerRuntimeUi() {
         showExternalPlayer = args.onOpenInExternalPlayer != null,
         durationMs = playbackSnapshot.durationMs,
         positionMs = displayedPositionMs,
+        bufferedPositionMs = playbackSnapshot.bufferedPositionMs.coerceAtLeast(0L),
         sourceIsLoading = sourceStreamsState.isAnyLoading,
         sourceFilters = sourceFilters,
         sourceItems = sourceItems,

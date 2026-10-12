@@ -1874,6 +1874,8 @@ private:
         if (!webView) return;
         double duration = doubleProperty("duration", 0.0);
         double position = doubleProperty("time-pos", 0.0);
+        double cacheAhead = cacheAheadSeconds();
+        double bufferedPosition = std::max((position + cacheAhead), 0.0);
         double volumeLevel = volume();
         bool paused = isPaused();
         bool loading = isLoading();
@@ -1883,6 +1885,7 @@ private:
         std::ostringstream script;
         script << "window.playerUpdate({duration:" << duration
                << ",position:" << position
+               << ",bufferedPosition:" << bufferedPosition
                << ",volumeLevel:" << volumeLevel
                << ",paused:" << (paused ? "true" : "false")
                << ",loading:" << (loading ? "true" : "false")

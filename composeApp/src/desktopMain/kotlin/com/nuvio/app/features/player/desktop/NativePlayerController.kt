@@ -1521,6 +1521,8 @@ private fun PlayerControlsState.toControlsJson(isFullscreen: Boolean): String =
         append(',')
         appendJsonField("positionMs", positionMs)
         append(',')
+        appendJsonField("bufferedPositionMs", bufferedPositionMs)
+        append(',')
         appendJsonField("sourceIsLoading", sourceIsLoading)
         append(',')
         appendJsonArrayField("sourceFilters", sourceFilters) { appendFilterItemJson(it) }
