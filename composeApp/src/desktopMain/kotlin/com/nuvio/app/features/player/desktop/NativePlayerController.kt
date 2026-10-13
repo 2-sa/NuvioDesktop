@@ -536,6 +536,8 @@ internal class NativePlayerController(
                 }
             }
             "toggleFullscreen" -> {
+                if (onEvent(type, value)) 
+                    return
                 if (DesktopPlayerPictureInPicture.isEnabled) {
                     DesktopPlayerPictureInPicture.toggle()
                 } else {
