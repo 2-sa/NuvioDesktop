@@ -262,9 +262,9 @@ let state = {
   themeSelectedSurfaceHoverColor: "#2d4565",
   themeSelectedRingColor: "rgba(47, 111, 237, .35)",
   themeTimelineFillColor: "#fff",
-  themeTimelineTrackColor: "rgba(255, 255, 255, .28)",
+  themeTimelineTrackColor: "rgba(255, 255, 255, .3)",
   themeBufferingColor: "#fff",
-  themeBufferingTrackColor: "rgba(255, 255, 255, .28)",
+  themeBufferingTrackColor: "rgba(255, 255, 255, .35)",
   themeControlForegroundColor: "#fff",
   themeSurfaceElevatedColor: "#16171d",
   themeSurfaceCardColor: "rgba(255, 255, 255, .08)",
@@ -772,9 +772,9 @@ const applyTheme = () => {
   setColor("--theme-selected-surface-hover", state.themeSelectedSurfaceHoverColor, "#2d4565");
   setColor("--theme-selected-ring", state.themeSelectedRingColor, "rgba(47, 111, 237, .35)");
   setColor("--theme-timeline-fill", state.themeTimelineFillColor, "#fff");
-  setColor("--theme-timeline-track", state.themeTimelineTrackColor, "rgba(255, 255, 255, .28)");
+  setColor("--theme-timeline-track", state.themeTimelineTrackColor, "rgba(255, 255, 255, .3)");
   setColor("--theme-buffering", state.themeBufferingColor, "#fff");
-  setColor("--theme-buffering-track", state.themeBufferingTrackColor, "rgba(255, 255, 255, .28)");
+  setColor("--theme-buffering-track", state.themeBufferingTrackColor, "rgba(255, 255, 255, .35)");
   setColor("--theme-control-foreground", state.themeControlForegroundColor, "#fff");
   setColor("--theme-surface-elevated", state.themeSurfaceElevatedColor, "#16171d");
   setColor("--theme-surface-card", state.themeSurfaceCardColor, "rgba(255, 255, 255, .08)");

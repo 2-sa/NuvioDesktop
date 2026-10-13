@@ -31,9 +31,9 @@
   --theme-selected-surface-hover: #2d4565;
   --theme-selected-ring: rgba(47, 111, 237, .35);
   --theme-timeline-fill: #fff;
-  --theme-timeline-track: rgba(255, 255, 255, .28);
+  --theme-timeline-track: rgba(255, 255, 255, .3);
   --theme-buffering: #fff;
-  --theme-buffering-track: rgba(255, 255, 255, .28);
+  --theme-buffering-track: rgba(255, 255, 255, .35);
   --theme-control-foreground: #fff;
   --theme-surface-elevated: #16171d;
   --theme-surface-card: rgba(255, 255, 255, .08);
