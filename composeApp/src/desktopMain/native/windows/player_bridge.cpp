@@ -2136,10 +2136,14 @@ private:
     }
 
     double cacheAheadSeconds() {
-        double effectivePosition = rawPositionSeconds();
+        double effectivePosition = effectiveCachePositionSeconds();
         double cacheTime = doubleProperty("demuxer-cache-time", 0.0);
-        if (std::isfinite(cacheTime) && cacheTime > 0.0 && cacheTime >= effectivePosition) {
-            return std::max(cacheTime - effectivePosition, 0.0);
+        if (std::isfinite(cacheTime) && cacheTime > 0.0) {
+            if (cacheTime >= effectivePosition - 5.0) {
+                return std::max(cacheTime - effectivePosition, 0.0);
+            }
+            double rawPosition = rawPositionSeconds();
+            return std::max(cacheTime - rawPosition, 0.0);
         }
 
         double cacheDuration = doubleProperty("demuxer-cache-duration", 0.0);

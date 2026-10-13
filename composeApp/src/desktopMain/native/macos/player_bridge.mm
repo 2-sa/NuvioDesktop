@@ -2340,10 +2340,17 @@ static void nuvioMpvWakeup(void *ctx) {
 }
 
 - (double)cacheAheadSecondsForPosition:(double)position {
-    double effectivePosition = std::isfinite(position) ? fmax(position, 0.0) : 0.0;
+    double safePosition = std::isfinite(position) ? fmax(position, 0.0) : 0.0;
+    double effectivePosition = safePosition;
+    if (_initialStartSeconds > 0.0 && safePosition + 5.0 < _initialStartSeconds) {
+        effectivePosition = _initialStartSeconds;
+    }
     double cacheTime = [self doubleProperty:"demuxer-cache-time" fallback:0.0];
-    if (std::isfinite(cacheTime) && cacheTime > 0.0 && cacheTime >= effectivePosition) {
-        return fmax(cacheTime - effectivePosition, 0.0);
+    if (std::isfinite(cacheTime) && cacheTime > 0.0) {
+        if (cacheTime >= effectivePosition - 5.0) {
+            return fmax(cacheTime - effectivePosition, 0.0);
+        }
+        return fmax(cacheTime - safePosition, 0.0);
     }
 
     double cacheDuration = [self doubleProperty:"demuxer-cache-duration" fallback:0.0];
