@@ -1613,6 +1613,7 @@ private fun PlayerControlsState.nativeControlsStructureKey(): PlayerControlsStat
         isLoading = false,
         durationMs = 0L,
         positionMs = 0L,
+        bufferedPositionMs = 0L,
     )
 
 private fun StringBuilder.appendJsonField(name: String, value: String) {
