@@ -352,7 +352,7 @@ internal fun PlayerScreenRuntime.RenderPlayerRuntimeUi() {
         themeTimelineFillColor = themeColors.playerTimelineFill.toCssColorString(),
         themeTimelineTrackColor = themeColors.playerTimelineTrack.toCssColorString(),
         themeBufferingColor = themeColors.playerBuffering.toCssColorString(),
-        themeBufferingTrackColor = themeColors.playerBuffering.copy(alpha = 0.28f).toCssColorString(),
+        themeBufferingTrackColor = themeColors.playerBuffering.copy(alpha = 0.35f).toCssColorString(),
         themeControlForegroundColor = themeColors.playerControlsForeground.toCssColorString(),
         themeSurfaceElevatedColor = themeColors.surfaceElevated.toCssColorString(),
         themeSurfaceCardColor = themeColors.surfaceCard.toCssColorString(),
