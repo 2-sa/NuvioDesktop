@@ -868,7 +868,7 @@ gboolean pushPlayerUpdate(gpointer data) {
     double duration = mpvGetDouble(player->mpv, "duration");
     double position = mpvGetDouble(player->mpv, "time-pos");
     double cache = mpvGetDouble(player->mpv, "demuxer-cache-time");
-    double bufferedPosition = std::max((cache + position), 0.0);
+    double bufferedPosition = std::max((cache > position ? cache : position), 0.0);
     double volumeLevel = mpvGetDouble(player->mpv, "volume") / 100.0;
     volumeLevel = std::max(0.0, std::min(kMaxVolumePercent / 100.0, volumeLevel));
     bool paused = mpvGetFlag(player->mpv, "pause");
@@ -1816,7 +1816,8 @@ JNIEXPORT jlong JNICALL NP(bufferedPositionMs)(JNIEnv *, jobject, jlong handle) 
     if (!p) return 0;
     double pos = mpvGetDouble(p->mpv, "time-pos");
     double cache = mpvGetDouble(p->mpv, "demuxer-cache-time");
-    return static_cast<jlong>(std::max((cache + pos), 0.0) * 1000.0);
+    double buffered = cache > pos ? cache : pos;
+    return static_cast<jlong>(buffered * 1000.0);
 }
 
 JNIEXPORT jboolean JNICALL NP(isLoading)(JNIEnv *, jobject, jlong handle) {

@@ -1818,7 +1818,7 @@ static void setMpvOptionString(mpv_handle *mpv, const char *name, const char *va
             double position = [self doubleProperty:"time-pos" fallback:0.0];
             double volumeLevel = [self volume];
             double cacheAhead = [self cacheAheadSecondsForPosition:position];
-            double bufferedPosition = fmax((position + cacheAhead), 0.0);
+            double bufferedPosition = (double)([self bufferedPositionMs] / 1000.0);
             BOOL paused = [self rawIsPaused];
             BOOL ended = [self rawIsEnded];
             BOOL loading = [self rawLoadingWithPaused:paused ended:ended duration:duration];
@@ -2340,17 +2340,10 @@ static void nuvioMpvWakeup(void *ctx) {
 }
 
 - (double)cacheAheadSecondsForPosition:(double)position {
-    double safePosition = std::isfinite(position) ? fmax(position, 0.0) : 0.0;
-    double effectivePosition = safePosition;
-    if (_initialStartSeconds > 0.0 && safePosition + 5.0 < _initialStartSeconds) {
-        effectivePosition = _initialStartSeconds;
-    }
+    double effectivePosition = std::isfinite(position) ? fmax(position, 0.0) : 0.0;
     double cacheTime = [self doubleProperty:"demuxer-cache-time" fallback:0.0];
-    if (std::isfinite(cacheTime) && cacheTime > 0.0) {
-        if (cacheTime >= effectivePosition - 5.0) {
-            return fmax(cacheTime - effectivePosition, 0.0);
-        }
-        return cacheTime;
+    if (std::isfinite(cacheTime) && cacheTime > 0.0 && cacheTime >= effectivePosition) {
+        return fmax(cacheTime - effectivePosition, 0.0);
     }
 
     double cacheDuration = [self doubleProperty:"demuxer-cache-duration" fallback:0.0];

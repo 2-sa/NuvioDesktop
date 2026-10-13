@@ -1874,8 +1874,7 @@ private:
         if (!webView) return;
         double duration = doubleProperty("duration", 0.0);
         double position = doubleProperty("time-pos", 0.0);
-        double cacheAhead = cacheAheadSeconds();
-        double bufferedPosition = std::max((position + cacheAhead), 0.0);
+        double bufferedPosition = (double)(bufferedPositionMs() / 1000.0);
         double volumeLevel = volume();
         bool paused = isPaused();
         bool loading = isLoading();
@@ -2137,13 +2136,10 @@ private:
     }
 
     double cacheAheadSeconds() {
-        double effectivePosition = effectiveCachePositionSeconds();
+        double effectivePosition = rawPositionSeconds();
         double cacheTime = doubleProperty("demuxer-cache-time", 0.0);
-        if (std::isfinite(cacheTime) && cacheTime > 0.0) {
-            if (cacheTime >= effectivePosition - 5.0) {
-                return std::max(cacheTime - effectivePosition, 0.0);
-            }
-            return cacheTime;
+        if (std::isfinite(cacheTime) && cacheTime > 0.0 && cacheTime >= effectivePosition) {
+            return std::max(cacheTime - effectivePosition, 0.0);
         }
 
         double cacheDuration = doubleProperty("demuxer-cache-duration", 0.0);
