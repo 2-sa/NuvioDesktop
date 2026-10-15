@@ -50,7 +50,10 @@ internal typealias NativePlayerCreate = (
 
 internal class NativePlayerController(
     private val host: NativePlayerHost,
-    private val nativeCreate: NativePlayerCreate = NativePlayerBridge::create,
+    private val nativeCreate: NativePlayerCreate = { hostViewPtr, source, headers, playWhenReady, positionMs, controlsUrl, decoder, rtx, sink ->
+        NativePlayerBridge.ensureLoaded()
+        NativePlayerBridge.create(hostViewPtr, source, headers, playWhenReady, positionMs, controlsUrl, decoder, rtx, sink)
+    },
     private val nativeDispose: (Long) -> Unit = NativePlayerBridge::dispose,
     private val nativeSeekTo: (Long, Long) -> Unit = NativePlayerBridge::seekTo,
     private val isHostDisplayable: () -> Boolean = { host.isDisplayable },
