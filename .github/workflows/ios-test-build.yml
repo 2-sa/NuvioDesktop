@@ -109,4 +109,4 @@ jobs:
           name: nuvio-test-${{ inputs.configuration }}-ipa-${{ github.sha }}
           path: build/ios-ipa/*.ipa
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 1

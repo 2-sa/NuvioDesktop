@@ -131,6 +131,7 @@ jobs:
         if: inputs.mode != 'dry-run'
         uses: actions/upload-artifact@v7
         with:
+          retention-days: 1
           name: release-notes
           path: release-notes.md
           if-no-files-found: error
@@ -187,6 +188,7 @@ jobs:
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v7
         with:
+          retention-days: 1
           name: nuvio-${{ needs.prepare.outputs.version }}-android-full-release
           path: androidApp/build/outputs/apk/full/release/*.apk
           if-no-files-found: error
@@ -257,6 +259,7 @@ jobs:
       - name: Upload iOS artifact
         uses: actions/upload-artifact@v7
         with:
+          retention-days: 1
           name: nuvio-${{ needs.prepare.outputs.version }}-ios-full-release
           path: build/ios-ipa/*-full-release.ipa
           if-no-files-found: error

@@ -138,7 +138,7 @@ jobs:
           name: nuvio-desktop-${{ steps.release.outputs.version }}-release-notes
           path: release-notes.md
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
 
   macos:
     name: macOS ${{ matrix.arch }}
@@ -356,7 +356,7 @@ jobs:
           name: nuvio-desktop-${{ needs.metadata.outputs.version }}-macos-${{ matrix.arch }}
           path: composeApp/build/compose/release-dmgs/Nuvio-macOS-${{ matrix.arch }}-${{ needs.metadata.outputs.version }}.dmg
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
 
       - name: Remove temporary signing material
         if: always() && env.MACOS_NOTARIZATION_ENABLED == 'true'
@@ -576,7 +576,7 @@ jobs:
             composeApp/build/compose/release-msis/Nuvio-Windows-x64-${{ needs.metadata.outputs.version }}.msi
             composeApp/build/compose/release-msis/Nuvio-Windows-x64-${{ needs.metadata.outputs.version }}-contents.txt
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
 
   linux_flatpak:
     name: Linux x64 - Flatpak
@@ -709,7 +709,7 @@ jobs:
           name: nuvio-desktop-${{ needs.metadata.outputs.version }}-linux-flatpak
           path: Nuvio-Linux-x86_64-${{ needs.metadata.outputs.version }}.flatpak
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
 
   linux_deb:
     name: Linux x64 - DEB
@@ -792,7 +792,7 @@ jobs:
           name: nuvio-desktop-${{ needs.metadata.outputs.version }}-linux-deb
           path: Nuvio-Linux-x86_64-${{ needs.metadata.outputs.version }}.deb
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
 
   linux_rpm:
     name: Linux x64 - RPM
@@ -875,7 +875,7 @@ jobs:
           name: nuvio-desktop-${{ needs.metadata.outputs.version }}-linux-rpm
           path: Nuvio-Linux-x86_64-${{ needs.metadata.outputs.version }}.rpm
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
 
   linux_appimage:
     name: Linux x64 - AppImage
@@ -1012,7 +1012,7 @@ jobs:
             Nuvio-Linux-x86_64-${{ needs.metadata.outputs.version }}.AppImage
             Nuvio-Linux-x86_64-${{ needs.metadata.outputs.version }}.AppImage.zsync
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 1
 
   release:
     name: Create ${{ inputs.mode }} release
