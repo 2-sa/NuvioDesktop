@@ -27,3 +27,5 @@ Application behavior and native/UI acceptance are outside this scoped policy cha
 - Verification: policy behavior and workflow checks run on GitHub-hosted Ubuntu for this source commit; see the **Artifact storage policy** Actions run attached to the commit for its actual result. No application tests, builds, downloads, or installations were run on the user's device. Application packaging/updater behavior was not exercised by a policy-only check.
 - Pending: GitHub may take 6–12 hours to recalculate storage after deletions. Existing artifacts do not receive shorter expiry retroactively; scheduled maintenance applies the same policy to them. Quota recovery and a future authorized release/upload must be observed separately. Scheduled workflows can be delayed or disabled by GitHub after inactivity; one-day upload retention remains the primary limit.
 
+
+- NuvioDesktop maintenance reads only workflow/script blobs through the GitHub API at the exact workflow SHA. This avoids an unrelated malformed `libass-android` gitlink during checkout; application submodules and LFS binaries are untouched.

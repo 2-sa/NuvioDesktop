@@ -30,11 +30,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - name: Read only policy source at the exact workflow commit
+        uses: actions/github-script@v9
         with:
-          persist-credentials: false
-          sparse-checkout: .github
-          sparse-checkout-cone-mode: false
+          script: |
+            const fs = require('node:fs');
+            const path = require('node:path');
+            const repo = context.repo;
+            const { data: commit } = await github.rest.git.getCommit({ ...repo, commit_sha: context.sha });
+            const { data: root } = await github.rest.git.getTree({ ...repo, tree_sha: commit.tree.sha });
+            const folder = root.tree.find(entry => entry.path === '.github' && entry.type === 'tree');
+            if (!folder) throw new Error('Policy source directory is missing');
+            const { data: tree } = await github.rest.git.getTree({ ...repo, tree_sha: folder.sha, recursive: '1' });
+            if (tree.truncated) throw new Error('Policy source listing was truncated');
+            let count = 0;
+            for (const entry of tree.tree) {
+              if (entry.type !== 'blob' || !(/^(workflows\/[^/]+\.ya?ml|scripts\/artifact-policy(?:\.test)?\.cjs)$/.test(entry.path))) continue;
+              const target = path.resolve('.github', entry.path);
+              if (!target.startsWith(path.resolve('.github') + path.sep)) throw new Error('Invalid policy source path');
+              const { data: blob } = await github.rest.git.getBlob({ ...repo, file_sha: entry.sha });
+              fs.mkdirSync(path.dirname(target), { recursive: true });
+              fs.writeFileSync(target, Buffer.from(blob.content, 'base64'));
+              count += 1;
+            }
+            core.info('Loaded ' + count + ' policy files from source commit ' + context.sha);
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
@@ -76,11 +95,30 @@ jobs:
       contents: read
       actions: write
     steps:
-      - uses: actions/checkout@v6
+      - name: Read only policy source at the exact workflow commit
+        uses: actions/github-script@v9
         with:
-          persist-credentials: false
-          sparse-checkout: .github
-          sparse-checkout-cone-mode: false
+          script: |
+            const fs = require('node:fs');
+            const path = require('node:path');
+            const repo = context.repo;
+            const { data: commit } = await github.rest.git.getCommit({ ...repo, commit_sha: context.sha });
+            const { data: root } = await github.rest.git.getTree({ ...repo, tree_sha: commit.tree.sha });
+            const folder = root.tree.find(entry => entry.path === '.github' && entry.type === 'tree');
+            if (!folder) throw new Error('Policy source directory is missing');
+            const { data: tree } = await github.rest.git.getTree({ ...repo, tree_sha: folder.sha, recursive: '1' });
+            if (tree.truncated) throw new Error('Policy source listing was truncated');
+            let count = 0;
+            for (const entry of tree.tree) {
+              if (entry.type !== 'blob' || !(/^(workflows\/[^/]+\.ya?ml|scripts\/artifact-policy(?:\.test)?\.cjs)$/.test(entry.path))) continue;
+              const target = path.resolve('.github', entry.path);
+              if (!target.startsWith(path.resolve('.github') + path.sep)) throw new Error('Invalid policy source path');
+              const { data: blob } = await github.rest.git.getBlob({ ...repo, file_sha: entry.sha });
+              fs.mkdirSync(path.dirname(target), { recursive: true });
+              fs.writeFileSync(target, Buffer.from(blob.content, 'base64'));
+              count += 1;
+            }
+            core.info('Loaded ' + count + ' policy files from source commit ' + context.sha);
       - uses: actions/github-script@v9
         env:
           DRY_RUN: ${{ github.event_name != 'schedule' && inputs.dry_run != false }}
